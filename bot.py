@@ -197,7 +197,7 @@ async def _enviar_resultado(
             f"Placa: `{_escape_md(resultado.placa)}`\n"
             f"Chassi: `{_escape_md(resultado.chassi)}`\n"
             f"Leilões verificados: {resultado.total_leiloes}\n"
-            f"Tempo: {resultado.tempo_total}s",
+            f"Tempo: {_escape_md(str(resultado.tempo_total))}s",
             parse_mode=ParseMode.MARKDOWN_V2,
         )
         return
@@ -209,7 +209,7 @@ async def _enviar_resultado(
         f"Placa: `{_escape_md(resultado.placa)}`\n"
         f"Chassi: `{_escape_md(resultado.chassi)}`\n"
         f"Leilões: {resultado.total_leiloes} \\| "
-        f"Tempo: {resultado.tempo_total}s\n\n"
+        f"Tempo: {_escape_md(str(resultado.tempo_total))}s\n\n"
         f"Enviando fotos\\.\\.\\.",
         parse_mode=ParseMode.MARKDOWN_V2,
     )
