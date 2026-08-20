@@ -328,6 +328,8 @@ def main() -> None:
         ],
         per_user=True,
         per_chat=True,
+        allow_reentry=True,
+        conversation_timeout=120,
     )
 
     app.add_handler(conv_handler)
