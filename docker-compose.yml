@@ -1,0 +1,12 @@
+services:
+  bot-leilao:
+    build: .
+    container_name: bot-leilao-telegram
+    restart: unless-stopped
+    env_file:
+      - .env
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
