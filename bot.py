@@ -7,6 +7,7 @@ de veículos por placa + chassi via API Big Miner.
 
 Fluxo:
     /consulta → digita placa → digita chassi → recebe fotos
+    (ou envie a placa diretamente, sem precisar do /consulta)
 
 Variáveis de ambiente:
     TELEGRAM_BOT_TOKEN  — token do @BotFather
@@ -62,6 +63,9 @@ AGUARDANDO_PLACA, AGUARDANDO_CHASSI = range(2)
 # Regex de validação
 RE_PLACA = re.compile(r"^[A-Z]{3}\d[A-Z0-9]\d{2}$")   # ABC1234 ou ABC1D23
 RE_CHASSI = re.compile(r"^[A-Z0-9]{17}$")
+
+# Filtro para detectar placa enviada diretamente, sem /consulta
+FILTRO_PLACA = filters.Regex(r"(?i)^\s*[a-z]{3}-?\d[a-z0-9]\d{2}\s*$")
 
 logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
@@ -285,7 +289,8 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Comandos disponíveis:\n"
         "  /consulta — Consultar imagens por placa \\+ chassi\n"
         "  /cancelar — Cancelar consulta em andamento\n"
-        "  /status — Verificar se o bot está ativo",
+        "  /status — Verificar se o bot está ativo\n\n"
+        "Dica: você também pode enviar a placa diretamente, sem usar /consulta\\.",
         parse_mode=ParseMode.MARKDOWN_V2,
     )
 
@@ -311,7 +316,10 @@ def main() -> None:
 
     # ConversationHandler para fluxo guiado
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler("consulta", cmd_consulta)],
+        entry_points=[
+            CommandHandler("consulta", cmd_consulta),
+            MessageHandler(filters.TEXT & ~filters.COMMAND & FILTRO_PLACA, receber_placa),
+        ],
         states={
             AGUARDANDO_PLACA: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, receber_placa),
